@@ -13,6 +13,7 @@ import { CameraAlt as CameraALtIcon } from "@mui/icons-material";
 import { VisuallyHiddenInput } from "../components/styles/StyleComponents";
 import { useFileHandler, useInputValidation, useStrongPassword } from "6pp";
 import { usernameValidator } from "../utils/validators";
+import { bgGradient } from "../components/constants/Color";
 function Login() {
   const [isLogin, setLogin] = useState(true);
   const toggleLogin = () => setLogin((prev) => !prev);
@@ -35,7 +36,7 @@ function Login() {
     <div
       style={{
         backgroundImage:
-          "linear-gradient(rgba(120,60,30,0.5),rgba(255,125,62,0.5))",
+          bgGradient
       }}
     >
       <Container

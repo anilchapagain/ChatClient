@@ -3,7 +3,7 @@ import React, { memo } from "react";
 import { ListItem, Stack, Typography, IconButton, Avatar } from "@mui/material";
 import { Add, Remove } from "@mui/icons-material";
 
-const UserItem = ({ user, handler, handlerIsLoading,isAdded=false }) => {
+const UserItem = ({ user, handler, handlerIsLoading,isAdded=false,styling }) => {
   const { name, _id, avatar } = user;
   return (
     <ListItem>
@@ -12,6 +12,7 @@ const UserItem = ({ user, handler, handlerIsLoading,isAdded=false }) => {
         alignItems="center"
         spacing={"1rem"}
         width={"100%"}
+        {...styling}
       >
         <Avatar />
         <Typography
