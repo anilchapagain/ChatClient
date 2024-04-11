@@ -31,4 +31,12 @@ process.env.JWT_SECRET);
 const emitEvent = (req,event,users,data) => {
   console.log(event);
 }
-export { connectDB, sendToken,cookieOption ,emitEvent};
+
+
+const deleteFilesFromCloudinary = async (public_id) => {
+
+}
+
+
+
+export { connectDB, sendToken,cookieOption ,emitEvent ,deleteFilesFromCloudinary};

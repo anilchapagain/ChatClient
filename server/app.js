@@ -14,7 +14,6 @@ const mongoUri = process.env.MONGO_URI;
 const app = express();
 connectDB(mongoUri);
 
-
 app.use(express.json());
 app.use(cookieParser());
 
