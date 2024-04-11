@@ -1,30 +1,33 @@
 import express from "express";
-import { Server } from "socket.io";
-import {createServer} from "http";
 
+import { connectDB } from "./utils/features.js";
+import dotenv from "dotenv";
+import { errorMiddleware } from "./middlewares/error.js";
+import cookieParser from "cookie-parser";
+
+import userRoutes from "./routes/user.js";
+import chatRouts from "./routes/chat.js";
+
+dotenv.config({ path: "./.env" });
+const mongoUri = process.env.MONGO_URI;
 
 const app = express();
-const server = createServer(app);
-const io = new Server(server,{
-    cors:{
-        origin:"*",
-        methods:["GET","POST"],
-        credentials:true,
-    }
+connectDB(mongoUri);
+
+
+app.use(express.json());
+app.use(cookieParser());
+
+app.use("/user", userRoutes);
+app.use("/chat", chatRouts);
+
+app.get("/", (req, res) => {
+  const name = req.query.name || "World";
+
+  res.send(`Hello ${name}!`);
 });
+app.use(errorMiddleware);
 
-
-app.get("/",(req,res)=>{
-    res.send("hello world");
-})
-
-io.on("connection",(socket)=>{
-    console.log("User Connected");
-    console.log("ID",socket.id);
-})
-
-
-
-server.listen(3000,()=>{
-    console.log("server is running in port 3000");
-})
+app.listen(3000, () => {
+  console.log("server is running in post 3000");
+});
