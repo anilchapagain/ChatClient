@@ -5,7 +5,7 @@ import {
   REFETCH_CHATS,
 } from "../constants/events.js";
 import { getOtherMember } from "../lib/helper.js";
-import { TryCatch, errorMiddleware } from "../middlewares/error.js";
+import { TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chat.js";
 import { User } from "../models/user.js";
 import { deleteFilesFromCloudinary, emitEvent } from "../utils/features.js";
@@ -198,8 +198,8 @@ const sendAttachments = TryCatch(async (req, res, next) => {
   ]);
   const files = req.files || [];
 
-  if (files.length < 1)
-    return next(new ErrorHandler("PLease provide attachments", 400));
+  if (files.length < 1 || files.length > 5)
+    return next(new ErrorHandler("PLease Upload attachments min 1 max 5", 400));
 
   if (!chat) return next(new ErrorHandler("CHat not found", 404));
   if (!user) return next(new ErrorHandler("User not found", 404));
@@ -339,15 +339,7 @@ const totalPages = Math.ceil(totalMessagesCount / limit);
   });
 });
 export {
-  newGroupChat,
-  getMyChat,
-  getMyGroups,
-  addMembers,
-  removeMember,
-  leaveGroup,
-  sendAttachments,
-  getChatDetails,
-  renameGroup,
-  deleteChatDetails,
-  getMessages,
+  addMembers, deleteChatDetails, getChatDetails, getMessages, getMyChat,
+  getMyGroups, leaveGroup, newGroupChat, removeMember, renameGroup, sendAttachments
 };
+

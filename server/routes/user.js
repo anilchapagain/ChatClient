@@ -1,5 +1,5 @@
 import  express  from 'express';
-import { getMyProfile, login, logout, newUsers, searchUser } from '../controllers/user.js';
+import { acceptRequest, getAllNotifications, getMyFriends, getMyProfile, login, logout, newUsers, searchUser, sendRequest } from '../controllers/user.js';
 import {multerUpload} from '../middlewares/multer.js'
 import { isAuthenticated } from '../middlewares/auth.js';
 
@@ -14,5 +14,9 @@ app.use(isAuthenticated);
 app.get( '/me', getMyProfile);
 app.get("/logout", logout);
 app.get("/search", searchUser);
+app.put("/sendrequest", sendRequest);
+app.put("/acceptrequest", acceptRequest);
+app.get("/notifications", getAllNotifications);
+app.get("/friends", getMyFriends);
 
 export default app;

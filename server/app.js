@@ -1,32 +1,86 @@
 import express from "express";
 
-import { connectDB } from "./utils/features.js";
+import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import { errorMiddleware } from "./middlewares/error.js";
-import cookieParser from "cookie-parser";
+import { connectDB } from "./utils/features.js";
 
-import userRoutes from "./routes/user.js";
+import adminRoutes from "./routes/admin.js";
 import chatRouts from "./routes/chat.js";
+import userRoutes from "./routes/user.js";
+import { Server } from "socket.io";
+import { createServer } from "http";
+import { v4 as uuid } from "uuid";
+import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
+import { getSockets } from "./lib/helper.js";
 
 dotenv.config({ path: "./.env" });
 const mongoUri = process.env.MONGO_URI;
 
-const app = express();
+export const userSocketIDs = new Map();
+
 connectDB(mongoUri);
+
+const app = express();
+const server = createServer(app);
+const io = new Server(server, {});
 
 app.use(express.json());
 app.use(cookieParser());
 
 app.use("/user", userRoutes);
 app.use("/chat", chatRouts);
+app.use("/admin", adminRoutes);
 
 app.get("/", (req, res) => {
   const name = req.query.name || "World";
 
   res.send(`Hello ${name}!`);
 });
+
+io.on("connection", (socket) => {
+  const user = {
+    _id: "aa",
+    name: "names",
+  };
+
+  userSocketIDs.set(user._id.toString(), socket.id);
+  console.log("a user connected", socket.id);
+
+  socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
+    const messageForRealTime = {
+      content: message,
+      _id: uuid(),
+      sender: {
+        _id: user._id,
+        name: user.name,
+      },
+      chat: chatId,
+      createdAt: new Date().toISOString(),
+    };
+    const messageForDB = {
+      content: message,
+      sender: user._id,
+      chat: chatId,
+    };
+    const membersSocket = getSockets(members);
+
+    io.to(membersSocket).emit(NEW_MESSAGE, {
+      chat: chatId,
+      message: messageForRealTime,
+    });
+    io.to(membersSocket).emit(NEW_MESSAGE_ALERT, { chatId });
+
+    
+  });
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+    userSocketIDs.delete(user._id.toString());
+  });
+});
 app.use(errorMiddleware);
 
-app.listen(3000, () => {
+server.listen(3000, () => {
   console.log("server is running in post 3000");
 });
