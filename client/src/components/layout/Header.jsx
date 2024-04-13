@@ -7,10 +7,11 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import axios from "axios";
 import React, { lazy, useState } from "react";
 import { orange } from "../constants/Color";
 import { useNavigate } from "react-router-dom";
-
+import { toast } from "react-hot-toast";
 import {
   Add,
   Group,
@@ -20,24 +21,31 @@ import {
   Search,
 } from "@mui/icons-material";
 import { Suspense } from "react";
-
+import { server } from "../constants/config";
 
 const SearchDialog = lazy(() => import("../specific/Search"));
 const NewGroups = lazy(() => import("../specific/NewGroups"));
 const Notification = lazy(() => import("../specific/Notification"));
-// const [isSearch,setIsSearch]=useState(false);
+// const [isSearch,setIsSearch]=import { toast, Toast } from 'react-hot-toast';
+import { useDispatch, useSelector } from "react-redux";
+import { userNotExists } from "../../redux/reducers/auth";
+import { setIsMobile, setIsSearch } from "../../redux/reducers/misc";
+
 // const [isSearch,setIsSearch]=useState(false);
 // const [isSearch,setIsSearch]=useState(false);
 // const [isSearch, setIsSearch] = useState(false);
 
 const Header = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { isSearch } = useSelector((state) => state.misc);
+
   const handleMobile = () => {
-    console.log("handel menu");
+    dispatch(setIsMobile(true));
   };
   const openSearchDialog = () => {
-    setIsSearch((prev) => !prev);
-    console.log("open searh dialog");
+    dispatch(setIsSearch(true));
   };
   const openNewGroup = () => {
     setIsNewGroup((prev) => !prev);
@@ -46,18 +54,26 @@ const Header = () => {
   // const history = useHistory();
   const navigateToGroup = () => {
     console.log("open Group");
-  return  navigate('/groups');
+    return navigate("/groups");
     // history.push("/groups");
-    
   };
-  const logoutHandler = () => {
-    console.log("open Group");
+
+  const logoutHandler = async (e) => {
+    try {
+      const { data } = await axios.get(`${server}/api/v1/user/logout`, {
+        withCredentials: true,
+      });
+      dispatch(userNotExists());
+      toast.success(data.message);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "some thing went wrong");
+    }
   };
   const openNotification = () => {
     setIsNotification((prev) => !prev);
     console.log("open Notification");
   };
-  const [isSearch, setIsSearch] = useState(false);
+
   // const [isManageGroup, setIsManageGroups] = useState(false);
   const [isNewGroup, setIsNewGroup] = useState(false);
   const [isNotification, setIsNotification] = useState(false);

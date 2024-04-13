@@ -24,18 +24,12 @@ export const userSocketIDs = new Map();
 
 connectDB(mongoUri);
 cloudinary.config({
-  cloud_name:  "dy0vggvvo",
-  api_key: "883837535493763",
-  api_secret:
-     "NxMyF0RVa5h7OWgyojeK-ixqJzU",
-});
-
-console.log({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret:
-    process.env.CLOUDINARY_API_SECRET,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+
 
 const app = express();
 const server = createServer(app);

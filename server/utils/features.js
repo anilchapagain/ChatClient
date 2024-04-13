@@ -52,14 +52,14 @@ const uploadFilesToCloudinary = async (files = []) => {
   });
   try {
     const results = await Promise.all(uploadPromises);
-    console.log("result", results);
+   
     const formatedResults = results.map((result) => ({
       public_id: result.public_id,
       url: result.url,
     })
     
   );
-  console.log('formatedResults', formatedResults);
+ 
   return formatedResults;
   } catch (error) {
     throw new Error('Error uploading file to cloudinary',error)

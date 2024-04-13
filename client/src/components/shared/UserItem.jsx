@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
-import React, { memo } from "react";
-import { ListItem, Stack, Typography, IconButton, Avatar } from "@mui/material";
 import { Add, Remove } from "@mui/icons-material";
+import { Avatar, IconButton, ListItem, Stack, Typography } from "@mui/material";
+import React, { memo } from "react";
+import { transformImage } from "../../lib/features";
 
 const UserItem = ({ user, handler, handlerIsLoading,isAdded=false,styling }) => {
   const { name, _id, avatar } = user;
@@ -14,7 +15,7 @@ const UserItem = ({ user, handler, handlerIsLoading,isAdded=false,styling }) => 
         width={"100%"}
         {...styling}
       >
-        <Avatar />
+        <Avatar src={transformImage(avatar)} />
         <Typography
           variant="body1"
           sx={{
@@ -34,10 +35,10 @@ const UserItem = ({ user, handler, handlerIsLoading,isAdded=false,styling }) => 
         <IconButton
           size="small"
           sx={{
-            bgcolor: isAdded ? 'error.main':"primary.main",
+            bgcolor: isAdded ? "error.main" : "primary.main",
             color: "white",
             "&:hover": {
-              bgcolor: isAdded ? 'error.dark':"primary.dark",
+              bgcolor: isAdded ? "error.dark" : "primary.dark",
             },
           }}
           onClick={() => handler(_id)}

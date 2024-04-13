@@ -1,11 +1,14 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import { Stack, Avatar , Typography } from "@mui/material";
 import {Face as FaceIcon , AlternateEmail as UserNameIcon , CalendarMonth as CalenderIcon } from '@mui/icons-material'
 import moment from "moment";
-const Profile = () => {
+import { transformImage } from "../../lib/features";
+const Profile = ({user}) => {
   return (
     <Stack spacing={"2rem"} direction={"column"} alignItems={"center"}>
       <Avatar
+        src={transformImage(user?.avatar.url)}
         sx={{
           width: 200,
           height: 200,
@@ -14,20 +17,16 @@ const Profile = () => {
           border: "5px solid White",
         }}
       />
-      <ProfileCard text={"Bio"} heading={"i am the heading"} />
+      <ProfileCard text={"Bio"} heading={user.bio} />
       <ProfileCard
         text={"UserName"}
-        heading={"i am the heading"}
+        heading={user.username}
         Icon={<UserNameIcon />}
       />
-      <ProfileCard
-        text={"Name"}
-        heading={"i am the heading"}
-        Icon={<FaceIcon />}
-      />
+      <ProfileCard text={"Name"} heading={user.name} Icon={<FaceIcon />} />
       <ProfileCard
         text={"Joined Room"}
-        heading={moment('2023-11-04').fromNow()}
+        heading={moment(user?.createdAt).fromNow()}
         Icon={<CalenderIcon />}
       />
     </Stack>
