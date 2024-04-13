@@ -29,7 +29,7 @@ const Notification = lazy(() => import("../specific/Notification"));
 // const [isSearch,setIsSearch]=import { toast, Toast } from 'react-hot-toast';
 import { useDispatch, useSelector } from "react-redux";
 import { userNotExists } from "../../redux/reducers/auth";
-import { setIsMobile, setIsSearch } from "../../redux/reducers/misc";
+import { setIsMobile, setIsNotification, setIsSearch } from "../../redux/reducers/misc";
 
 // const [isSearch,setIsSearch]=useState(false);
 // const [isSearch,setIsSearch]=useState(false);
@@ -39,7 +39,9 @@ const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { isSearch } = useSelector((state) => state.misc);
+  const { isSearch, isNotification, isNewGroup } = useSelector(
+    (state) => state.misc
+  );
 
   const handleMobile = () => {
     dispatch(setIsMobile(true));
@@ -70,13 +72,11 @@ const Header = () => {
     }
   };
   const openNotification = () => {
-    setIsNotification((prev) => !prev);
-    console.log("open Notification");
+   dispatch(setIsNotification(true));
   };
 
   // const [isManageGroup, setIsManageGroups] = useState(false);
-  const [isNewGroup, setIsNewGroup] = useState(false);
-  const [isNotification, setIsNotification] = useState(false);
+  
   return (
     <>
       <Box sx={{ flexGrow: 1 }} height={"4rem"}>

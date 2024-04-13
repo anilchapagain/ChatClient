@@ -3,13 +3,14 @@ import { Drawer, Grid, Skeleton } from "@mui/material";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { useErrors } from "../../hooks/hook";
 import { useMyChatsQuery } from "../../redux/api/api";
 import { setIsMobile } from "../../redux/reducers/misc";
 import Title from "../shared/Title";
 import ChatList from "../specific/ChatList";
 import Profile from "../specific/Profile";
 import Header from "./Header";
-import { useErrors } from "../../hooks/hook";
+import { getSocket } from "../../socket";
 
 const AppLayout = (WrappedComponent) => {
   return (props) => {
@@ -21,10 +22,13 @@ const AppLayout = (WrappedComponent) => {
 
     const { isLoading, data, isError, error, refetch } = useMyChatsQuery("");
 
-
-    useErrors([{isError,error}]);
+    useErrors([{ isError, error }]);
 
     const chatId = `${params.chatId}`;
+
+    const socket = getSocket();
+
+    console.log(socket)
 
     const handleDeleteChat = (e, _id, groupChat) => {
       e.preventDefault();

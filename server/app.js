@@ -5,9 +5,6 @@ import dotenv from "dotenv";
 import { errorMiddleware } from "./middlewares/error.js";
 import { connectDB } from "./utils/features.js";
 
-import adminRoutes from "./routes/admin.js";
-import chatRouts from "./routes/chat.js";
-import userRoutes from "./routes/user.js";
 import { Server } from "socket.io";
 import { createServer } from "http";
 import { v4 as uuid } from "uuid";
@@ -16,6 +13,12 @@ import { v2 as cloudinary } from "cloudinary";
 
 import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
 import { getSockets } from "./lib/helper.js";
+import { corsOption } from "./constants/config.js";
+import { socketAuthenticator } from "./middlewares/auth.js";
+
+import adminRoutes from "./routes/admin.js";
+import chatRouts from "./routes/chat.js";
+import userRoutes from "./routes/user.js";
 
 dotenv.config({ path: "./.env" });
 const mongoUri = process.env.MONGO_URI;
@@ -29,25 +32,15 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-
-
 const app = express();
 const server = createServer(app);
-const io = new Server(server, {});
+const io = new Server(server, {
+  cors: corsOption,
+});
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "http://127.0.0.1:5173",
-      "http://127.0.0.1:4173",
-      process.env.CLIENT_URL,
-    ],
-    credentials: true,
-  })
-);
+app.use(cors(corsOption));
 
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/chat", chatRouts);
@@ -57,6 +50,14 @@ app.get("/", (req, res) => {
   const name = req.query.name || "World";
 
   res.send(`Hello ${name}!`);
+});
+
+io.use((socket, next) => {
+  cookieParser()(
+    socket.request,
+    socket.request.res,
+    async (err) => await socketAuthenticator(err, socket, next)
+  );
 });
 
 io.on("connection", (socket) => {
