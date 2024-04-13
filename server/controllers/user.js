@@ -1,6 +1,6 @@
 // create new user and save it to db
 import { User } from "./../models/user.js";
-import { cookieOption, emitEvent, sendToken } from "../utils/features.js";
+import { cookieOption, emitEvent, sendToken, uploadFilesToCloudinary } from "../utils/features.js";
 import { compare } from "bcrypt";
 import { ErrorHandler } from "../utils/utility.js";
 import { TryCatch } from "../middlewares/error.js";
@@ -15,9 +15,10 @@ const newUsers = TryCatch(async (req, res, next) => {
   const file = req.file;
   if (!file) return next(new ErrorHandler("PLease upload Avatar"));
 
+const result = await uploadFilesToCloudinary([file]);
   const avatar = {
-    public_id: "id",
-    url: "url",
+    public_id: result[0].public_id,
+    url: result[0].url,
   };
   const user = await User.create({ name, username, password, bio, avatar });
   sendToken(res, user, 201, "User Created");

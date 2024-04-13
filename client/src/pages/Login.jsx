@@ -9,11 +9,18 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+
+ 
 import { CameraAlt as CameraALtIcon } from "@mui/icons-material";
 import { VisuallyHiddenInput } from "../components/styles/StyleComponents";
 import { useFileHandler, useInputValidation, useStrongPassword } from "6pp";
 import { usernameValidator } from "../utils/validators";
 import { bgGradient } from "../components/constants/Color";
+import axios  from 'axios';
+import { server } from "../components/constants/config";
+import { useDispatch } from 'react-redux';
+import { userExists } from "../redux/reducers/auth";
+import  Toast  from 'react-hot-toast';
 function Login() {
   const [isLogin, setLogin] = useState(true);
   const toggleLogin = () => setLogin((prev) => !prev);
@@ -23,13 +30,54 @@ function Login() {
   const password = useStrongPassword();
   const avatar = useFileHandler("single");
 
-  const handleLogin = (e) => {
+
+  const dispatch = useDispatch();
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("login submit");
+    const config = {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+   
+
+    try {
+     const {data} =  await axios.post(
+        `${server}/api/v1/user/login`,
+        { username: username.value, password: password.value },
+        config
+      );
+      dispatch(userExists(true))
+      Toast.success(data.message);
+    } catch (error) {
+      Toast.error(error?.response?.data?.message || 'server error')
+    }
   };
-  const handleSignup = (e) => {
+  const handleSignup = async(e) => {
     e.preventDefault();
-    console.log("handle sign up");
+     const configUpload = {
+       withCredentials: true,
+       headers: {
+         "Content-Type": "multipart/form-data",
+       },
+     };
+    const formData = new FormData();
+    formData.append("username", username.value);
+    formData.append("password", password.value);
+    formData.append("name", name.value);
+    formData.append("bio", bio.value);
+    formData.append("avatar",avatar.file);
+
+try {
+  const {data} = await axios.post(`${server}/api/v1/user/new`,formData,configUpload);
+  dispatch(userExists(true))
+  Toast.success(data.message);
+} catch (error) {
+   Toast.error(error?.response?.data?.message || "server error");
+}
+
+
   };
 
   return (
