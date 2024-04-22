@@ -4,6 +4,7 @@ import { Link } from "../styles/StyleComponents";
 import { Stack, Typography, Box } from "@mui/material";
 import { memo } from "react";
 import AvatarCard from "./AvatarCard";
+import { purpleLight } from "../constants/Color";
 
 const ChatItem = ({
   avatar = [],
@@ -30,7 +31,7 @@ const ChatItem = ({
           gap: "1rem",
           alignItems: "center",
           padding: "1rem",
-          background: sameSender ? "black" : "unset",
+          background: sameSender ? purpleLight : "unset",
           color: sameSender ? "white" : "unset",
           position: "relative",
         }}
@@ -41,7 +42,7 @@ const ChatItem = ({
           {newMessageAlert && (
             <Typography>
               {newMessageAlert.count}
-              {newMessageAlert.count && "New Message"}
+              {newMessageAlert.count && " New Message"}
             </Typography>
           )}
         </Stack>

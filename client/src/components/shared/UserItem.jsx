@@ -4,7 +4,13 @@ import { Avatar, IconButton, ListItem, Stack, Typography } from "@mui/material";
 import React, { memo } from "react";
 import { transformImage } from "../../lib/features";
 
-const UserItem = ({ user, handler, handlerIsLoading,isAdded=false,styling }) => {
+const UserItem = ({
+  user,
+  handler,
+  handlerIsLoading,
+  isAdded = false,
+  styling,
+}) => {
   const { name, _id, avatar } = user;
   return (
     <ListItem>
@@ -21,8 +27,8 @@ const UserItem = ({ user, handler, handlerIsLoading,isAdded=false,styling }) => 
           sx={{
             flexGrow: 1,
             display: "-webkit-box",
-            "-webkit-line-clamp": 1,
-            "-webkit-box-orient": "vertical",
+            WebkitLineClamp: 1,
+            WebkitBoxOrient: "vertical",
             overflow: "hidden",
             fontWeight: 500,
             lineHeight: 1.25,
@@ -42,7 +48,7 @@ const UserItem = ({ user, handler, handlerIsLoading,isAdded=false,styling }) => 
             },
           }}
           onClick={() => handler(_id)}
-          disable={handlerIsLoading}
+          disable={handlerIsLoading ? "true" : "false"}
         >
           {isAdded ? <Remove color="red" /> : <Add />}
         </IconButton>

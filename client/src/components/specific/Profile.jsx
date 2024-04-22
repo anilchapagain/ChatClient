@@ -1,10 +1,14 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import { Stack, Avatar , Typography } from "@mui/material";
-import {Face as FaceIcon , AlternateEmail as UserNameIcon , CalendarMonth as CalenderIcon } from '@mui/icons-material'
+import { Stack, Avatar, Typography } from "@mui/material";
+import {
+  Face as FaceIcon,
+  AlternateEmail as UserNameIcon,
+  CalendarMonth as CalenderIcon,
+} from "@mui/icons-material";
 import moment from "moment";
 import { transformImage } from "../../lib/features";
-const Profile = ({user}) => {
+const Profile = ({ user }) => {
   return (
     <Stack spacing={"2rem"} direction={"column"} alignItems={"center"}>
       <Avatar
@@ -42,20 +46,16 @@ const ProfileCard = ({ text, Icon, heading }) => (
     textAlign={"center"}
   >
     {Icon && Icon}
-    <Stack>
-      <Typography variant="body1">
-{text}
+    <Stack textAlign={"center"}>
+      <Typography textAlign={"center"} variant="body1">
+        {heading}
       </Typography>
-      <Typography color={'grey'} variant="caption" >{heading}</Typography>
+
+      <Typography textAlign={"center"} color={"grey"} variant="caption">
+        {text}
+      </Typography>
     </Stack>
   </Stack>
-
-
-
-
-
-
-
 );
 
 export default Profile;

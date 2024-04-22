@@ -1,6 +1,7 @@
 import {
   AppBar,
   Backdrop,
+  Badge,
   Box,
   IconButton,
   Toolbar,
@@ -9,7 +10,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import React, { lazy, useState } from "react";
-import { orange } from "../constants/Color";
+import { navy, orange, purple, purpleLight } from "../constants/Color";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import {
@@ -29,19 +30,26 @@ const Notification = lazy(() => import("../specific/Notification"));
 // const [isSearch,setIsSearch]=import { toast, Toast } from 'react-hot-toast';
 import { useDispatch, useSelector } from "react-redux";
 import { userNotExists } from "../../redux/reducers/auth";
-import { setIsMobile, setIsNotification, setIsSearch } from "../../redux/reducers/misc";
+import {
+  setIsMobile,
+  setIsNewGroup,
+  setIsNotification,
+  setIsSearch,
+} from "../../redux/reducers/misc";
+import { resetNotificationCount } from "../../redux/reducers/chat";
 
 // const [isSearch,setIsSearch]=useState(false);
 // const [isSearch,setIsSearch]=useState(false);
-// const [isSearch, setIsSearch] = useState(false);
+
 
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+// const [isNewGroup, setIsNewGroup] = useState(false);
   const { isSearch, isNotification, isNewGroup } = useSelector(
     (state) => state.misc
   );
+  const { notificationCount } = useSelector((state) => state.chat);
 
   const handleMobile = () => {
     dispatch(setIsMobile(true));
@@ -50,8 +58,7 @@ const Header = () => {
     dispatch(setIsSearch(true));
   };
   const openNewGroup = () => {
-    setIsNewGroup((prev) => !prev);
-    console.log("open add dialog");
+    dispatch(setIsNewGroup(true));
   };
   // const history = useHistory();
   const navigateToGroup = () => {
@@ -72,18 +79,19 @@ const Header = () => {
     }
   };
   const openNotification = () => {
-   dispatch(setIsNotification(true));
+    dispatch(setIsNotification(true));
+    dispatch(resetNotificationCount());
   };
 
   // const [isManageGroup, setIsManageGroups] = useState(false);
-  
+
   return (
     <>
       <Box sx={{ flexGrow: 1 }} height={"4rem"}>
         <AppBar
           position="static"
           sx={{
-            bgcolor: orange,
+            bgcolor: navy,
           }}
         >
           <Toolbar>
@@ -120,28 +128,29 @@ const Header = () => {
             <Box>
               <IconBtn
                 title={"Search"}
-                click={openSearchDialog}
+                onClick={openSearchDialog}
                 icon={<Search />}
               />
 
               <IconBtn
                 title={"Add Group"}
-                click={openNewGroup}
+                onClick={openNewGroup}
                 icon={<Add />}
               />
               <IconBtn
                 title={"Manage Group"}
-                click={navigateToGroup}
+                onClick={navigateToGroup}
                 icon={<Group />}
               />
               <IconBtn
                 title={"Notification"}
-                click={openNotification}
+                onClick={openNotification}
                 icon={<Notifications />}
+                value={notificationCount}
               />
               <IconBtn
                 title={"Logout"}
-                click={logoutHandler}
+                onClick={logoutHandler}
                 icon={<Logout />}
               />
             </Box>
@@ -167,11 +176,17 @@ const Header = () => {
     </>
   );
 };
-const IconBtn = ({ title, click, icon }) => {
+const IconBtn = ({ title, onClick, icon, value }) => {
   return (
     <Tooltip title={title}>
-      <IconButton color="inherit" size="large" onClick={click}>
-        {icon}
+      <IconButton color="inherit" size="large" onClick={onClick}>
+        {value ? (
+          <Badge badgeContent={value} color="error">
+            {icon}
+          </Badge>
+        ) : (
+          icon
+        )}
       </IconButton>
     </Tooltip>
   );

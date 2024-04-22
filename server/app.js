@@ -11,7 +11,7 @@ import { v4 as uuid } from "uuid";
 import cors from "cors";
 import { v2 as cloudinary } from "cloudinary";
 
-import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
+import { NEW_MESSAGE, NEW_MESSAGE_ALERT, START_TYPING, STOP_TYPING } from "./constants/events.js";
 import { getSockets } from "./lib/helper.js";
 import { corsOption } from "./constants/config.js";
 import { socketAuthenticator } from "./middlewares/auth.js";
@@ -19,6 +19,7 @@ import { socketAuthenticator } from "./middlewares/auth.js";
 import adminRoutes from "./routes/admin.js";
 import chatRouts from "./routes/chat.js";
 import userRoutes from "./routes/user.js";
+import { Message } from "./models/message.js";
 
 dotenv.config({ path: "./.env" });
 const mongoUri = process.env.MONGO_URI;
@@ -37,6 +38,7 @@ const server = createServer(app);
 const io = new Server(server, {
   cors: corsOption,
 });
+app.set('io',io);
 
 app.use(express.json());
 app.use(cookieParser());
@@ -61,16 +63,12 @@ io.use((socket, next) => {
 });
 
 io.on("connection", (socket) => {
-  const user = {
-    _id: "aa",
-    name: "names",
-  };
+  const user = socket.user;
 
   userSocketIDs.set(user._id.toString(), socket.id);
-  console.log("a user connected", socket.id);
+  console.log("a user connected", user._id);
 
   socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
-    console.log("Received NEW_MESSAGE event:", { chatId, members, message });
 
     const messageForRealTime = {
       content: message,
@@ -90,13 +88,25 @@ io.on("connection", (socket) => {
     const membersSocket = getSockets(members);
 
     io.to(membersSocket).emit(NEW_MESSAGE, {
-      chat: chatId,
+      chatId,
       message: messageForRealTime,
     });
     io.to(membersSocket).emit(NEW_MESSAGE_ALERT, { chatId });
 
-    console.log("new message", messageForRealTime);
+    try {
+      await Message.create(messageForDB);
+    } catch (error) {
+      console.log(error);
+    }
   });
+  socket.on(START_TYPING,({members,chatId}) => {
+    const membersSocket = getSockets(members)
+socket.to(membersSocket).emit(START_TYPING,{chatId})
+  })
+   socket.on(STOP_TYPING, ({ members, chatId }) => {
+     const membersSocket = getSockets(members);
+     socket.to(membersSocket).emit(STOP_TYPING, { chatId });
+   });
 
   socket.on("disconnect", () => {
     console.log("user disconnected");
