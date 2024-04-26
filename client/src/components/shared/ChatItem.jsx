@@ -5,6 +5,8 @@ import { Stack, Typography, Box } from "@mui/material";
 import { memo } from "react";
 import AvatarCard from "./AvatarCard";
 import { purpleLight } from "../constants/Color";
+import { motion } from 'framer-motion';
+import { Delete } from '@mui/icons-material';
 
 const ChatItem = ({
   avatar = [],
@@ -25,7 +27,10 @@ const ChatItem = ({
       to={`/chat/${_id}`}
       onContextMenu={(e) => handelDeleteChat(e, _id, groupChat)}
     >
-      <div
+      <motion.div 
+        initial={{ opacity: 0, y:'-100%'}}
+        whileInView={{ opacity:1, y:0}} 
+        transition={{ delay: index*0.1}}
         style={{
           display: "flex",
           gap: "1rem",
@@ -60,7 +65,7 @@ const ChatItem = ({
             }}
           />
         )}
-      </div>
+      </motion.div>
     </Link>
   );
 };
