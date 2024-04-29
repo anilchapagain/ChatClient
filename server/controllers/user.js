@@ -50,16 +50,18 @@ const logout = TryCatch(async (req, res, next) => {
       message: "Logged Out Successfully",
     });
 });
-const searchUser = TryCatch(async (req, res, next) => {
-  const { name } = req.query;
-  const myChats = await Chat.find({
-    groupChat: false,
-    members: req.user,
-  });
-  const allUSersFromMYChats = myChats.flatMap((chat) => chat.members);
+const searchUser = TryCatch(async (req, res) => {
+  const { name = "" } = req.query;
 
+  
+  const myChats = await Chat.find({ groupChat: false, members: req.user });
+
+  
+  const allUsersFromMyChats = myChats.flatMap((chat) => chat.members);
+
+  
   const allUsersExceptMeAndFriends = await User.find({
-    _id: { $nin: allUSersFromMYChats },
+    _id: { $nin: allUsersFromMyChats },
     name: { $regex: name, $options: "i" },
   });
   const users = allUsersExceptMeAndFriends.map(({ _id, name, avatar }) => ({

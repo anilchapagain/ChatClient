@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
-import AdminLayout from "./../../components/layout/AdminLayout";
-import Table from "../../components/shared/Table";
-import { Avatar, Stack, Box } from "@mui/material";
-import { dashboardData } from "../../components/constants/sampleData";
-import { fileFormat, transformImage } from "../../lib/features";
+import { useFetchData } from "6pp";
+import { Avatar, Box, Skeleton, Stack } from "@mui/material";
 import moment from "moment";
+import React, { useEffect, useState } from "react";
+import { server } from "../../components/constants/config";
+import Table from "../../components/shared/Table";
+import { useErrors } from "../../hooks/hook";
+import { fileFormat, transformImage } from "../../lib/features";
+import AdminLayout from "./../../components/layout/AdminLayout";
 import RenderAttachment from "./../../components/shared/RenderAttachment";
 
 const columns = [
@@ -30,7 +32,7 @@ const columns = [
                 key={i}
                 alignItems={"center"}
                 direction={"row"}
-                alignSelf={'center'}
+                alignSelf={"center"}
                 spacing={"1rem"}
               >
                 <a
@@ -93,28 +95,45 @@ const columns = [
 ];
 const MessageManagement = () => {
   const [rows, setRows] = useState([]);
+  const { loading, data, error, refetch } = useFetchData(
+    `${server}/api/v1/admin/messages`,
+    "dashboard-message"
+  );
+
+  useErrors([
+    {
+      isError: error,
+      error: error,
+    },
+  ]);
   useEffect(() => {
-    setRows(
-      dashboardData.messages.map((i) => ({
-        ...i,
-        id: i._id,
-        sender: {
-          name: i.sender.name,
-          avatar: transformImage(i.sender.avatar, 50),
-        },
-        createdAt: moment(i.createdAt).format("MMMM Do YYYY,h:mm:ss a"),
-      }))
-    );
-  }, []);
+    if (data) {
+      setRows(
+        data.messages.map((i) => ({
+          ...i,
+          id: i._id,
+          sender: {
+            name: i.sender.name,
+            avatar: transformImage(i.sender.avatar, 50),
+          },
+          createdAt: moment(i.createdAt).format("MMMM Do YYYY,h:mm:ss a"),
+        }))
+      );
+    }
+  }, [data]);
 
   return (
     <AdminLayout>
-      <Table
-        heading={"All Messages"}
-        columns={columns}
-        rows={rows}
-        roHeight={200}
-      />
+      {loading ? (
+        <Skeleton />
+      ) : (
+        <Table
+          heading={"All Messages"}
+          columns={columns}
+          rows={rows}
+          roHeight={200}
+        />
+      )}
     </AdminLayout>
   );
 };

@@ -51,7 +51,7 @@ const LineChart = ({ value = [] }) => {
     datasets: [
       {
         data: value,
-        label: "revenue",
+        label: "Messages",
         fill: true,
         backgroundColor: purpleLight,
         borderColor: purple,
@@ -71,7 +71,7 @@ const doughnutChartOptions = {
       display: false,
     },
   },
-  cutout:120,
+  cutout: 120,
 };
 const DoughnutChart = ({ value = [], labels = [] }) => {
   const data = {
@@ -83,11 +83,17 @@ const DoughnutChart = ({ value = [], labels = [] }) => {
         backgroundColor: [purpleLight, orangeLight],
         borderColor: [purple, orange],
         hoverBackgroundColor: [purple, orange],
-        offset:40,
+        offset: 40,
       },
     ],
   };
-  return <Doughnut style={{zIndex:10}} data={data} options={doughnutChartOptions}/>;
+  return (
+    <Doughnut
+      style={{ zIndex: 10 }}
+      data={data}
+      options={doughnutChartOptions}
+    />
+  );
 };
 
 export { LineChart, DoughnutChart };

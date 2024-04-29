@@ -5,6 +5,8 @@ import React, { useCallback, useRef, useState, useEffect } from "react";
 import { grayColor } from "../components/constants/Color";
 import {
   ALERT,
+  CHAT_JOINED,
+  CHAT_LEAVED,
   NEW_MESSAGE,
   START_TYPING,
   STOP_TYPING,
@@ -82,10 +84,11 @@ const Chat = ({ chatId, user }) => {
   };
 
 
+  // useEffect(() => {
+  //   if(!chatDetails?.data?.chat) return navigate('/')
+  // },[chatDetails.data,navigate])
   useEffect(() => {
-    if(!chatDetails?.data?.chat) return navigate('/')
-  },[chatDetails.data,navigate])
-  useEffect(() => {
+    socket.emit(CHAT_JOINED, { userId: user._id ,members});
     dispatch(removeNewMessagesAlert(chatId));
 
     return () => {
@@ -93,8 +96,11 @@ const Chat = ({ chatId, user }) => {
       setMessages([]);
       setOldMessages([]);
       setPage(1);
+    socket.emit(CHAT_LEAVED, { userId: user._id, members });
+
+
     };
-  }, [chatId]);
+  }, [chatId,dispatch]);
   useEffect(() => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });

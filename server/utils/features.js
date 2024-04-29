@@ -29,6 +29,7 @@ const sendToken = (res, user, code, message) => {
   );
   return res.status(code).cookie("secret-token", token, cookieOption).json({
     success: true,
+    user,
     message,
   });
 };

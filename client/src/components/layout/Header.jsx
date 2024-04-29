@@ -42,7 +42,7 @@ import { resetNotificationCount } from "../../redux/reducers/chat";
 // const [isSearch,setIsSearch]=useState(false);
 
 
-const Header = () => {
+const Header = ({user}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 // const [isNewGroup, setIsNewGroup] = useState(false);
@@ -82,6 +82,7 @@ const Header = () => {
     dispatch(setIsNotification(true));
     dispatch(resetNotificationCount());
   };
+  
 
   // const [isManageGroup, setIsManageGroups] = useState(false);
 
@@ -149,7 +150,7 @@ const Header = () => {
                 value={notificationCount}
               />
               <IconBtn
-                title={"Logout"}
+                title={`Logout ${user}`}
                 onClick={logoutHandler}
                 icon={<Logout />}
               />

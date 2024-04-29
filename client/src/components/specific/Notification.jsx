@@ -17,7 +17,7 @@ import {
   useAcceptFriendRequestMutation,
   useGetNotificationsQuery,
 } from "../../redux/api/api";
-import { useErrors } from "../../hooks/hook";
+import { useAsyncMutation, useErrors } from "../../hooks/hook";
 import { useSelector, useDispatch } from "react-redux";
 import { setIsNotification } from "../../redux/reducers/misc";
 import { toast } from "react-hot-toast";
@@ -28,17 +28,20 @@ const Notification = () => {
   const { isLoading, data, error, isError } = useGetNotificationsQuery();
   const notificationClose = () => dispatch(setIsNotification(false));
 
-  const [acceptFriendRequest] = useAcceptFriendRequestMutation();
+  const [acceptFriendRequest] = useAsyncMutation(
+    useAcceptFriendRequestMutation
+  );
   const friendRequestHandler = async ({ _id, accept }) => {
     dispatch(setIsNotification(false));
-    try {
-      const res = await acceptFriendRequest({ requestId: _id, accept });
-      if (res.data?.success) {
-        toast.success(res.data.message);
-      } else toast.error(res.data?.error|| 'something went wrong')
-    } catch (error) {
-      toast.error('something went wrong');
-    }
+    await acceptFriendRequest('Accepting ....',{ requestId: _id, accept });
+    // try {
+    //   const res = await acceptFriendRequest({ requestId: _id, accept });
+    //   if (res.data?.success) {
+    //     toast.success(res.data.message);
+    //   } else toast.error(res.data?.error|| 'something went wrong')
+    // } catch (error) {
+    //   toast.error('something went wrong');
+    // }
   };
   useErrors([{ isError, error }]);
   return (
