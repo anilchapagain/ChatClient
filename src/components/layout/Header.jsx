@@ -41,11 +41,10 @@ import { resetNotificationCount } from "../../redux/reducers/chat";
 // const [isSearch,setIsSearch]=useState(false);
 // const [isSearch,setIsSearch]=useState(false);
 
-
-const Header = ({user}) => {
+const Header = ({ user }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-// const [isNewGroup, setIsNewGroup] = useState(false);
+  // const [isNewGroup, setIsNewGroup] = useState(false);
   const { isSearch, isNotification, isNewGroup } = useSelector(
     (state) => state.misc
   );
@@ -82,7 +81,6 @@ const Header = ({user}) => {
     dispatch(setIsNotification(true));
     dispatch(resetNotificationCount());
   };
-  
 
   // const [isManageGroup, setIsManageGroups] = useState(false);
 
@@ -105,7 +103,7 @@ const Header = ({user}) => {
                 },
               }}
             >
-              Chat App
+              Nedl Chat App
             </Typography>
 
             <Box
